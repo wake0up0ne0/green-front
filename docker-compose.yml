@@ -1,0 +1,6 @@
+services:
+  green-front:
+    image: ${DOCKER_REGISTRY-}greenfront
+    build:
+      context: .
+      dockerfile: green-front/Dockerfile
