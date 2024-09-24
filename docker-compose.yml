@@ -4,3 +4,6 @@ services:
     build:
       context: .
       dockerfile: green-front/Dockerfile
+    ports:
+       - 56255:8081
+       - 56254:8080
