@@ -1,7 +1,140 @@
 ﻿@page "/"
+@using RestSharp
+@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>GreenAPI Andrei Martianov</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width: 30%;">
+                <p>idInstance : <input type="text" @bind="idInstance" /> </p>
+                <p>apiTokenInstance : <input type="text" @bind="apiTokenInstance" />  </p>
+                <p><button class="btn btn-primary" @onclick="GetSettings">GetSettings</button></p>
+                <p>&nbsp;</p>
 
-Welcome to your new app.
+                <p><button class="btn btn-primary" @onclick="GetStateInstance">GetStateInstance</button></p>
+                <p>&nbsp;</p>
+
+                <p>chatId : <input type="text" @bind="chatId" /> </p>
+                <p>message : <input type="text" @bind="message" />  </p>
+                <p><button class="btn btn-primary" @onclick="SendMessage">SendMessage</button></p>
+                <p>&nbsp;</p>
+
+                <p>chatId : <input type="text" @bind="chatId" /> </p>
+                <p>urlFile : <input type="text" @bind="urlFile" />  </p>
+                <p><button class="btn btn-primary" @onclick="SendFileByUrl">SendFileByUrl</button></p>
+
+            </td>
+            <td>
+                <input class="full" type="text" @bind="answer" placeholder="answer will appear here..." />
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+
+@code {
+    private string idInstance = "7103124933";
+    private string apiTokenInstance = "1d643c4d0604421dad4bada737d094517be971a541e147f6b4";
+    private string chatId = "5491166826460@c.us";
+    private string message = "Hello-world";
+    private string urlFile = "https://do-mediaout-7103.fra1.digitaloceanspaces.com/7103124933/a7cb76af-9d5e-4d2a-a06c-afaf7b16bef5.png";
+    private string fileName = "cv.png";
+    private string caption = "cv";
+    private string answer = "";
+
+    private async void GetSettings()
+    {
+        var options = new RestClientOptions("https://7103.api.greenapi.com")
+            {
+                MaxTimeout = -1,
+            };
+        var client = new RestClient(options);
+        var request = new RestRequest($"/waInstance{idInstance}/getSettings/{apiTokenInstance}", Method.Get);
+        RestResponse response = await client.ExecuteAsync(request);
+
+        if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
+        {
+            answer = response.Content;
+            Console.WriteLine("settings is : " + answer);
+            StateHasChanged(); 
+        }
+    }
+
+    private async void GetStateInstance()
+    {
+        var options = new RestClientOptions("https://7103.api.greenapi.com")
+            {
+                MaxTimeout = -1,
+            };
+        var client = new RestClient(options);
+        var request = new RestRequest($"/waInstance{idInstance}/getStateInstance/{apiTokenInstance}", Method.Get);
+        RestResponse response = await client.ExecuteAsync(request);
+
+        if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
+        {
+            answer = response.Content;
+            Console.WriteLine("stateInstance is : " + answer);
+            StateHasChanged();
+        }
+    }
+    private async void SendMessage()
+    {
+        var options = new RestClientOptions("https://7103.api.greenapi.com")
+            {
+                MaxTimeout = -1,
+            };
+        var client = new RestClient(options);
+        var request = new RestRequest($"/waInstance{idInstance}/sendMessage/{apiTokenInstance}", Method.Post);
+        request.AddHeader("Content-Type", "application/json");
+            var body = @"{
+                            ""chatId"": """ + chatId + @""",
+                            ""message"": """ + message + @"""
+                        }";
+
+        request.AddStringBody(body, DataFormat.Json);
+        RestResponse response = await client.ExecuteAsync(request);
+        Console.WriteLine(response.Content);
+
+        if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
+        {
+            answer = response.Content;
+            Console.WriteLine("SendMessage response is : " + answer);
+            StateHasChanged();
+        }
+    }
+    private async void SendFileByUrl()
+    {
+        var options = new RestClientOptions("https://7103.api.greenapi.com")
+            {
+                MaxTimeout = -1,
+            };
+        var client = new RestClient(options);
+        var request = new RestRequest($"/waInstance{idInstance}/sendFileByUrl/{apiTokenInstance}", Method.Post);
+        
+        
+        request.AddHeader("Content-Type", "application/json");
+        var body = @"{
+                            ""chatId"": """ + chatId + @""",
+                            ""urlFile"": """ + urlFile + @""",
+                            ""fileName"": """ + fileName + @""",
+                            ""caption"": """ + caption + @"""
+                        }";
+        request.AddStringBody(body, DataFormat.Json);
+        
+        RestResponse response = await client.ExecuteAsync(request);
+
+        if (response.IsSuccessful && !string.IsNullOrEmpty(response.Content))
+        {
+            answer = response.Content;
+            Console.WriteLine("SendFileByUrl response is : " + answer);
+            StateHasChanged();
+        }
+    }
+}
