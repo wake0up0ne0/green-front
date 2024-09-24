@@ -6,9 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>green-front</RootNamespace>
     <AssemblyName>$(AssemblyName.Replace(' ', '_'))</AssemblyName>
+    <UserSecretsId>c927dc96-807a-451c-95ce-878a461b7755</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
     <PackageReference Include="RestSharp" Version="112.0.0" />
   </ItemGroup>
 
